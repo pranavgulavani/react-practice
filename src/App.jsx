@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Edit2, Trash2 } from "react-feather";
+import Button from "./components/button/Button";
+import TodoForm from "./components/todo_form/TodoForm";
+import Todo from "./components/todo/Todo";
 
 // const initialTodos = [
 //   { id: 1, title: "Buy groceries", completed: false },
@@ -12,8 +14,8 @@ import { Edit2, Trash2 } from "react-feather";
 function App() {
   console.count("App component");
   const [todos, setTodos] = useState([]);
-  const [todo,setTodo] = useState({id:"",title:"",completed:false})
-  const [editMode,setEditMode] = useState(false)
+  const [editMode, setEditMode] = useState(false);
+  const [currentTodo, setCurrentTodo] = useState(null);
 
   //console.log("todo state",todo)
   useEffect(() => {
@@ -21,61 +23,63 @@ function App() {
     //setTodos(initialTodos);
   }, []);
 
-  function handleSubmit(e,todo){
-      e.preventDefault();
-      if(!todo.title.trim()) return
-      if(editMode){
-        setTodos(prev => prev.map(item => item.id === todo.id ? {...item,title:todo.title}:item))
-        setEditMode(false)
-        return
-      }
-      const newTodo = {...todo,id:crypto.randomUUID()}
-      setTodos(prev => ([...prev,newTodo]))
-      setTodo({id:"",title:"",completed:false})
-      console.log("clicked add todo",todo)
+  function handleSubmit(e,todo) {
+    if (!todo.title.trim()) return;
+    if (editMode) {
+      setTodos((prev) =>
+        prev.map((item) =>
+          item.id === currentTodo.id ? { ...item, title: todo.title } : item
+        )
+      );
+      setEditMode(false);
+      setCurrentTodo(null)
+      return;
+    }
+    const newTodo = { ...todo, id: crypto.randomUUID() };
+    setTodos((prev) => [...prev, newTodo]);
+  }
+  function handleDelete(id) {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
   }
 
-  function handleTodoInput(e){
-      //console.log(e.target.value)
-      setTodo(prev => {
-        return {
-          ...prev,
-          title:e.target.value
-        }
-      })
-
+  function handleEdit(todo) {
+    setEditMode(true);
+    setCurrentTodo(todo); 
   }
-
-  function handleDelete(id){
-      setTodos(prev => prev.filter(todo=> todo.id !== id))
-  }
-
-  function handleEdit(todo){
-    setEditMode(true)
-    setTodo(todo)
+  function handleToggleComplete(id){
+    setTodos((prev) =>
+    prev.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    )
+  );
   }
   return (
     <>
       <h3>TODOs</h3>
-      <form onSubmit={(e) => handleSubmit(e,todo)}>
-      <input type="text" value={todo.title} placeholder="What do you need to add" onChange={handleTodoInput} />
-      <button type="submit">{editMode ? "Update" : "Add"}</button>
-      </form>
+      <TodoForm editMode={editMode} handleSubmit={handleSubmit} currentTodo={currentTodo} />
       {todos.length > 0 ? (
         todos.map((todo) => {
           return (
             <section key={todo.id}>
-              <input type="checkbox" />
-              <span>{todo.title}</span>
-              <button aria-label="edit-todo" onClick={() => handleEdit(todo)}><Edit2/></button>
-              <button aria-label="delete-todo" onClick={() => handleDelete(todo.id)}><Trash2/></button>
+              <Todo
+                todo={todo}
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+                handleToggleComplete={handleToggleComplete}
+              />
             </section>
           );
         })
       ) : (
         <p>No pending todo</p>
       )}
-      <button onClick={() => setTodos([])} disabled={todos.length==0}>Clear All</button>
+      <Button
+        aria-label="clear-all"
+        onClick={() => setTodos([])}
+        disabled={todos.length == 0}
+      >
+        Clear All
+      </Button>
     </>
   );
 }
