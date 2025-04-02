@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Button from "./components/button/Button";
-import TodoForm from "./components/todo_form/TodoForm";
-import Todo from "./components/todo/Todo";
+import TodoForm from "./components/todoForm/TodoForm";
+import TodoList from "./components/todoList/TodoList";
 
 // const initialTodos = [
 //   { id: 1, title: "Buy groceries", completed: false },
@@ -18,12 +18,12 @@ function App() {
   const [currentTodo, setCurrentTodo] = useState(null);
 
   //console.log("todo state",todo)
-  useEffect(() => {
-    console.count("Use effect with list initialization");
-    //setTodos(initialTodos);
-  }, []);
+  // useEffect(() => {
+  //   console.count("Use effect with list initialization");
+  //   //setTodos(initialTodos);
+  // }, []);
 
-  function handleSubmit(e,todo) {
+  function handleSubmit(e, todo) {
     if (!todo.title.trim()) return;
     if (editMode) {
       setTodos((prev) =>
@@ -32,54 +32,68 @@ function App() {
         )
       );
       setEditMode(false);
-      setCurrentTodo(null)
+      setCurrentTodo(null);
       return;
     }
     const newTodo = { ...todo, id: crypto.randomUUID() };
     setTodos((prev) => [...prev, newTodo]);
   }
-  function handleDelete(id) {
-    setTodos((prev) => prev.filter((todo) => todo.id !== id));
-  }
 
-  function handleEdit(todo) {
+  // function handleDelete(id) {
+  //   setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  // }
+
+  const handleDelete = useCallback((id) => {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  }, []);
+
+  // function handleEdit(todo) {
+  //   setEditMode(true);
+  //   setCurrentTodo(todo);
+  // }
+
+  const handleEdit = useCallback((todo) => {
     setEditMode(true);
-    setCurrentTodo(todo); 
-  }
-  function handleToggleComplete(id){
+    setCurrentTodo(todo);
+  }, []);
+
+  // function handleToggleComplete(id){
+  //   setTodos((prev) =>
+  //   prev.map((todo) =>
+  //     todo.id === id ? { ...todo, completed: !todo.completed } : todo
+  //   )
+  // );
+  // }
+
+  const handleToggleComplete = useCallback((id) => {
     setTodos((prev) =>
-    prev.map((todo) =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    )
-  );
-  }
+      prev.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  }, []);
   return (
     <>
       <h3>TODOs</h3>
-      <TodoForm editMode={editMode} handleSubmit={handleSubmit} currentTodo={currentTodo} />
-      {todos.length > 0 ? (
-        todos.map((todo) => {
-          return (
-            <section key={todo.id}>
-              <Todo
-                todo={todo}
-                handleDelete={handleDelete}
-                handleEdit={handleEdit}
-                handleToggleComplete={handleToggleComplete}
-              />
-            </section>
-          );
-        })
-      ) : (
-        <p>No pending todo</p>
+      <TodoForm
+        editMode={editMode}
+        handleSubmit={handleSubmit}
+        currentTodo={currentTodo}
+      />
+      <TodoList
+        todos={todos}
+        handleDelete={handleDelete}
+        handleEdit={handleEdit}
+        handleToggleComplete={handleToggleComplete}
+      />
+      {todos.length !== 0 && (
+        <Button
+          aria-label="clear-all"
+          onClick={() => setTodos([])}
+        >
+          Clear All
+        </Button>
       )}
-      <Button
-        aria-label="clear-all"
-        onClick={() => setTodos([])}
-        disabled={todos.length == 0}
-      >
-        Clear All
-      </Button>
     </>
   );
 }

@@ -5,17 +5,19 @@
 -   Hooks  
     1. useState
     2. UseEffect
-    3. useRef [Pending]
+    3. useRef
     4. custom hook [Pending]
--   Forward ref [Pending]
+    5. useReducer [Pending]
+    6. useContext [Pending]
+-   Forward ref [Not required]
 -   looping over list of Items
 -   React.Memo [Pending]
 -   Debounce [Pending]
 -   Throttle [Pending]
--   React Profiler [Pending]
--   Local storage / Data persistance
--   API integration sync / async
--   Testing unit / integration test.
+-   React Profiler
+-   Local storage / Data persistance [Pending]
+-   API integration sync / async [Pending]
+-   Testing unit / integration test.[Pending]
 -   CSS [Pending]
 -   Animation [Pending]
 -   TypeScript Migration [Pending]
