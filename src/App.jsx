@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import Button from "./components/button/Button";
 import TodoForm from "./components/todoForm/TodoForm";
 import TodoList from "./components/todoList/TodoList";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 // const initialTodos = [
 //   { id: 1, title: "Buy groceries", completed: false },
@@ -13,15 +14,23 @@ import TodoList from "./components/todoList/TodoList";
 
 function App() {
   console.count("App component");
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useLocalStorage()
   const [editMode, setEditMode] = useState(false);
   const [currentTodo, setCurrentTodo] = useState(null);
 
-  //console.log("todo state",todo)
   // useEffect(() => {
   //   console.count("Use effect with list initialization");
-  //   //setTodos(initialTodos);
+  //   const todos = localStorage.getItem("todos");
+  //   console.log(todos)
+  //     if (todos !== null && todos.length > 0) {
+  //       setTodos(JSON.parse(todos));
+  //     }
   // }, []);
+
+  // useEffect(() => {
+  //   localStorage.setItem("todos", JSON.stringify(todos));
+  // }, [todos]);
+  
 
   function handleSubmit(e, todo) {
     if (!todo.title.trim()) return;
