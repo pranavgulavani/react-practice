@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import Button from "./components/button/Button";
 import TodoForm from "./components/todoForm/TodoForm";
 import TodoList from "./components/todoList/TodoList";
 import useLocalStorage from "./hooks/useLocalStorage";
+import '@mantine/core/styles.css';
+import { MantineProvider } from '@mantine/core';
 
 // const initialTodos = [
 //   { id: 1, title: "Buy groceries", completed: false },
@@ -83,7 +85,8 @@ function App() {
   }, []);
   return (
     <>
-      <h3>TODOs</h3>
+    <MantineProvider>
+    <h3>TODOs</h3>
       <TodoForm
         editMode={editMode}
         handleSubmit={handleSubmit}
@@ -103,6 +106,7 @@ function App() {
           Clear All
         </Button>
       )}
+    </MantineProvider>
     </>
   );
 }
